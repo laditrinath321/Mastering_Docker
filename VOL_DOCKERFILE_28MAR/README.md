@@ -1,92 +1,112 @@
-# Docker Learning - Volumes, Bind Mounts, and HTTPD on Amazon Linux
+# Docker Learning - Practical Implementation
 
-## 🚀 Overview
-This repository contains practical examples and concepts related to Docker volumes, bind mounts, and building a custom Docker image for Apache HTTPD using Amazon Linux. It also demonstrates how to build and run a simple web application inside a container.
-
----
-
-## 📌 Topics Covered
-1. **Docker Volumes**
-2. **Bind Mounts**
-3. **Creating a Dockerfile for HTTPD (Amazon Linux as Base Image)**
-4. **Building a Docker Image**
-5. **Running an Application (index.html) Inside a Container**
+## Topics Covered
+1. Docker Volumes
+2. Bind Mounts
+3. Creating a Dockerfile for `httpd` using `amazonlinux` as the base image
+4. Building a Docker Image
+5. Running an Application (`index.html` page) inside a Container
 
 ---
 
-## 🛠 Commands Used
-### 🔹 Docker Volumes
-```bash
-# Listing Docker volumes
+## 1. Docker Volumes
+### Commands Used:
+```sh
+cd /var/lib/docker/volumes/
+ll
+cd vol1
+ls
+cd _data/
+ls
+ll
 docker volume ls
-
-# Inspecting a specific volume
 docker volume inspect vol1
-
-# Creating a Docker volume
-docker volume create test
-
-# Removing unused volumes
-docker volume prune
-
-# Removing specific volumes
-docker volume rm vol1 vol2
+docker volume rm vol1
 ```
+### Explanation:
+- Checked available Docker volumes
+- Navigated inside the volume directory
+- Inspected volume details
+- Removed unused volumes
 
-### 🔹 Bind Mounts
-```bash
-# Running a container with a bind mount
+---
+
+## 2. Bind Mounts
+### Commands Used:
+```sh
 docker run -it --name cont3 -v /opt:/app/logs amazonlinux
 ```
+### Explanation:
+- Used a bind mount to mount `/opt` from the host to `/app/logs` in the container
+- Allowed persistent storage between host and container
 
-### 🔹 Building a Docker Image for HTTPD (Amazon Linux)
-```bash
-# Writing the Dockerfile
+---
+
+## 3. Creating a Dockerfile for `httpd` using `amazonlinux`
+### Commands Used:
+```sh
 vim Dockerfile
-
-# Dockerfile Content
 cat Dockerfile
+```
+### Example Dockerfile:
+```Dockerfile
+FROM amazonlinux
+RUN yum install -y httpd
+COPY index.html /var/www/html/
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+EXPOSE 80
+```
+### Explanation:
+- Used Amazon Linux as the base image
+- Installed Apache (`httpd`)
+- Copied an `index.html` file
+- Set Apache as the default running process
+- Exposed port 80
 
-# Building the Docker image
+---
+
+## 4. Building the Docker Image
+### Commands Used:
+```sh
 docker build -t testimg:v1 -f Dockerfile .
+docker build -t devopshubg333/batch15d:httpd -f Dockerfile .
+docker build -t devopshubg333/batch15d:httpd_amazonlinx -f Dockerfile .
 ```
+### Explanation:
+- Built Docker images from the `Dockerfile`
+- Tagged the images appropriately
 
-### 🔹 Running the HTTPD Container
-```bash
-# Running a container with the built image
+---
+
+## 5. Running an Application (`index.html` page) inside a Container
+### Commands Used:
+```sh
 docker run -it --name ct1 -p 8082:80 testimg:v1
+docker run -it --name ct5 -p 8085:80 devopshubg333/batch15d:httpd_amazonlinx
 ```
-
-### 🔹 Publishing the Image to Docker Hub
-```bash
-# Tagging the image
-docker build -t devopshubg333/batch15d:httpd_amazonlinux -f Dockerfile .
-
-# Pushing the image to Docker Hub
-docker push devopshubg333/batch15d:httpd_amazonlinux
-```
+### Explanation:
+- Ran the container exposing Apache on different ports
+- Hosted `index.html` inside the container
 
 ---
 
-## 📂 Project Structure
+## 6. Pushing Image to Docker Hub
+### Commands Used:
+```sh
+docker push devopshubg333/batch15d:httpd_amazonlinx
 ```
-├── Dockerfile    # Custom Dockerfile for HTTPD (Amazon Linux)
-├── index.html    # Simple HTML file for testing
-└── README.md     # This documentation
+### Explanation:
+- Pushed the custom-built image to Docker Hub for future use
+
+---
+
+## Clean-up Commands Used:
+```sh
+docker volume prune
+docker system prune
+docker container prune
+docker images prune
 ```
+### Explanation:
+- Removed unused volumes, images, and containers to free up space
 
----
-
-## 🎯 Next Steps
-✅ Experiment with additional configurations for HTTPD.  
-✅ Automate the build and push process with CI/CD.  
-✅ Deploy the containerized application using Kubernetes.  
-
----
-
-## 💡 Author
-**DevOps Enthusiast** | 🚀 Follow for more Docker and Kubernetes content!
-
----
-
-🔥 If you find this useful, give it a ⭐ on GitHub! 😎
