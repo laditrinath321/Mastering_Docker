@@ -1,0 +1,20 @@
+FROM ubuntu:latest
+LABEL MAINTAINER "Trinath Ladi <laditrinath321@gmail.com>"
+
+RUN apt-get update -y && apt-get install -y python3 python3-pip python3-venv
+
+# Create a virtual environment and install Flask inside it
+RUN python3 -m venv /opt/venv
+RUN /opt/venv/bin/pip install --upgrade pip
+RUN /opt/venv/bin/pip install flask
+
+COPY app.py /opt/app.py
+
+# Set environment variables
+ENV FLASK_APP=/opt/app.py
+ENV PATH="/opt/venv/bin:$PATH"
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+
+EXPOSE 8080
+

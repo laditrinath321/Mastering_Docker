@@ -1,0 +1,20 @@
+FROM python:3.9
+
+# Copy the Flask application file to the container
+COPY app.py /opt/app.py
+
+# Set the working directory
+WORKDIR /opt
+
+# Install Flask (if not already installed inside the app)
+RUN pip install flask
+
+# Set the FLASK_APP environment variable
+ENV FLASK_APP=app.py
+
+# Expose the port on which the Flask application will run
+EXPOSE 8080
+
+# Run the Flask application
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+
